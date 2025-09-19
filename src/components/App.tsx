@@ -4,7 +4,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Component as SilkBackground } from '@/components/ui/silk-background-animation'
-import AuraBadge from '@/components/ui/aura-badge'
+// import AuraBadge from '@/components/ui/aura-badge'
 import { LavaLamp } from '@/components/ui/fluid-blob'
 import { OrbInput } from '@/components/ui/animated-input'
 import { PearlButton } from '@/components/ui/pearl-button'
@@ -15,6 +15,7 @@ import WeatherButton from '@/components/ui/button'
 import { routeWebhookPayload, mapPlanToTimeline } from '@/lib/plan-router'
 import { BlurText } from '@/components/ui/animated-blur-text'
 import { motion } from 'framer-motion'
+import ActivityChartCard from '@/components/ui/activity-chart-card'
 
 export function App(): JSX.Element {
   const [showMain, setShowMain] = useState(false)
@@ -132,15 +133,27 @@ export function App(): JSX.Element {
 
   if (!showMain) return <SilkBackground showCopy />
 
+  const weeklyActivityData = [
+    { day: 'S', value: 8 },
+    { day: 'M', value: 12 },
+    { day: 'T', value: 9 },
+    { day: 'W', value: 4 },
+    { day: 'T', value: 7 },
+    { day: 'F', value: 14 },
+    { day: 'S', value: 2 },
+  ]
+
   return (
     <div className="h-screen w-screen relative overflow-hidden bg-black rounded-none border-0 outline-none">
       {/* HUD removed */}
       {/* Lightweight background on main screen for smoothness */}
       <SilkBackground showCopy={false} mode="lite" />
-      {/* New compact Aura badge (fixed header) */}
-      <AuraBadge value={999} variant="fixed" />
-      {/* Удалён крупный фон с текстом "Aura" по требованию */}
-      {/* Убрали старую линию и число, чтобы не дублировать элементы */}
+      {/* Activity card replaces Aura */}
+      <div className="fixed top-[10px] left-[12px] z-[60] pointer-events-none">
+        <div className="pointer-events-auto">
+          <ActivityChartCard title="Activity" totalValue="21h" data={weeklyActivityData} />
+        </div>
+      </div>
       {/* Временная навигация: держим смонтированной, переключаем видимость CSS-классами */}
       <div className={`absolute inset-0 z-30 flex items-center justify-center transition-all duration-500 ease-out ${showTimeline ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
         <div className="w-full h-full md:scale-100 scale-[0.8] origin-center transition-transform duration-500 ease-out">
@@ -194,7 +207,7 @@ export function App(): JSX.Element {
                 ) : (
                   <motion.div
                     className={`${msg.role === 'user' 
-                      ? 'inline-block bg-[#2E2E2E] text-white rounded-[16px] max-w-[75%] px-3 py-2 mr-3'
+                      ? 'inline-block bg-[#2E2E2E] text-white rounded-[16px] max-w_[75%] px-3 py-2 mr-3'
                       : 'bg-white/10 text-white rounded-3xl max-w-[85%] px-4 py-3'} shadow-lg backdrop-blur-sm whitespace-pre-wrap break-words`}
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
@@ -220,12 +233,11 @@ export function App(): JSX.Element {
       </div>
       </div>
 
-      {/* Нижняя панель: Aura inline + Plan + инпут */}
+      {/* Нижняя панель: Activity card left padding preserved, input and plan */}
       <div className="absolute inset-x-0 bottom-2 z-40 flex flex-col items-center gap-3 px-3 transition-all duration-500 ease-out">
-        {/* Row: full-width like input, Aura ~33% and Plan aligned right */}
         <div className="w-full max-w-[340px] md:max-w-[560px] mx-auto flex items-center justify-between">
           <div className="relative" style={{ width: '33%' }}>
-            <AuraBadge value={999} variant="inline" />
+            {/* AuraBadge removed */}
           </div>
           <div className="flex-1" />
           <button
