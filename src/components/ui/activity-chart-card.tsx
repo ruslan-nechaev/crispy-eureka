@@ -52,7 +52,13 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
   } as const;
 
   return (
-    <Card className={cn("w-full max-w-md", className)} aria-labelledby="activity-card-title">
+    <Card
+      className={cn(
+        "w-full max-w-md rounded-2xl border border-white/15 bg-neutral-900/70 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur",
+        className
+      )}
+      aria-labelledby="activity-card-title"
+    >
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle id="activity-card-title">{title}</CardTitle>
@@ -76,9 +82,9 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
       <CardContent>
         <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4">
           <div className="flex flex-col">
-            <p className="text-5xl font-bold tracking-tighter text-foreground">{totalValue}</p>
-            <CardDescription className="flex items-center gap-1">
-              <TrendingUp className="h-4 w-4 text-emerald-500" />
+            <p className="text-5xl font-bold tracking-tighter text-white">{totalValue}</p>
+            <CardDescription className="flex items-center gap-1 text-neutral-400">
+              <TrendingUp className="h-4 w-4 text-emerald-400" />
               +12% from last week
             </CardDescription>
           </div>
@@ -94,12 +100,12 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
             {data.map((item, index) => (
               <div key={index} className="flex h-full w-full flex-col items-center justify-end gap-2" role="presentation">
                 <motion.div
-                  className="w-full rounded-md bg-primary"
+                  className="w-full rounded-md bg-neutral-300"
                   style={{ height: `${maxValue > 0 ? (item.value / maxValue) * 100 : 0}%` }}
                   variants={barVariants}
                   aria-label={`${item.day}: ${item.value} hours`}
                 />
-                <span className="text-xs text-muted-foreground">{item.day}</span>
+                <span className="text-xs text-neutral-400">{item.day}</span>
               </div>
             ))}
           </motion.div>
