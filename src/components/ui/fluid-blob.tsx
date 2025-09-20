@@ -244,6 +244,7 @@ function LavaLampShader(): JSX.Element {
   return (
     <mesh ref={meshRef as any}>
       <planeGeometry args={[5, 5]} />
+      {/* @ts-expect-error three-stdlib shader material props */}
       <shaderMaterial
         uniforms={uniforms}
         vertexShader={vertexShader}
@@ -273,6 +274,7 @@ function MaskShader(): JSX.Element {
   return (
     <mesh ref={meshRef as any}>
       <planeGeometry args={[5, 5]} />
+      {/* @ts-expect-error three-stdlib shader material props */}
       <shaderMaterial
         uniforms={uniforms}
         vertexShader={vertexShader}

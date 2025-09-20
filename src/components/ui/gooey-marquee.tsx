@@ -68,7 +68,7 @@ export function GooeyMarquee({ text, className = "", speed = 16 }: GooeyMarqueeP
         </p>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes marquee {
           from { transform: translateX(70%); }
           to { transform: translateX(-70%); }

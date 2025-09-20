@@ -148,12 +148,7 @@ export function App(): JSX.Element {
       {/* HUD removed */}
       {/* Lightweight background on main screen for smoothness */}
       <SilkBackground showCopy={false} mode="lite" />
-      {/* Activity card replaces Aura */}
-      <div className="fixed top-[10px] left-[12px] z-[60] pointer-events-none">
-        <div className="pointer-events-auto">
-          <ActivityChartCard title="Activity" totalValue="21h" data={weeklyActivityData} />
-        </div>
-      </div>
+      {/* Activity card above input on the left */}
       {/* Временная навигация: держим смонтированной, переключаем видимость CSS-классами */}
       <div className={`absolute inset-0 z-30 flex items-center justify-center transition-all duration-500 ease-out ${showTimeline ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
         <div className="w-full h-full md:scale-100 scale-[0.8] origin-center transition-transform duration-500 ease-out">
@@ -237,7 +232,9 @@ export function App(): JSX.Element {
       <div className="absolute inset-x-0 bottom-2 z-40 flex flex-col items-center gap-3 px-3 transition-all duration-500 ease-out">
         <div className="w-full max-w-[340px] md:max-w-[560px] mx-auto flex items-center justify-between">
           <div className="relative" style={{ width: '33%' }}>
-            {/* AuraBadge removed */}
+            <div className="pointer-events-auto">
+              <ActivityChartCard title="Activity" totalValue="21h" data={weeklyActivityData} />
+            </div>
           </div>
           <div className="flex-1" />
           <button
