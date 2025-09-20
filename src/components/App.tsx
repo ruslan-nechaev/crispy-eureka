@@ -228,15 +228,12 @@ export function App(): JSX.Element {
       </div>
       </div>
 
-      {/* Нижняя панель: Activity card left padding preserved, input and plan */}
+      {/* Нижняя панель: карточка активности над полем ввода */}
       <div className="absolute inset-x-0 bottom-2 z-40 flex flex-col items-center gap-3 px-3 transition-all duration-500 ease-out">
-        <div className="w-full max-w-[340px] md:max-w-[560px] mx-auto flex items-center justify-between">
-          <div className="relative" style={{ width: '33%' }}>
-            <div className="pointer-events-auto">
-              <ActivityChartCard title="Activity" totalValue="21h" data={weeklyActivityData} />
-            </div>
-          </div>
-          <div className="flex-1" />
+        <div className="w-full max-w-[340px] md:max-w-[560px] mx-auto pointer-events-auto">
+          <ActivityChartCard title="Activity" totalValue="21h" data={weeklyActivityData} />
+        </div>
+        <div className="w-full max-w-[340px] md:max-w-[560px] mx-auto flex items-center justify-end">
           <button
             type="button"
             aria-label="Plan"
@@ -266,7 +263,7 @@ export function App(): JSX.Element {
           </button>
         </div>
         <div className="w-full max-w-[340px] md:max-w-[560px] mx-auto">
-        <OrbInput onSend={handleSend} />
+          <OrbInput onSend={handleSend} />
         </div>
       </div>
     </div>
