@@ -18,6 +18,7 @@ interface ActivityChartCardProps {
   data: ActivityDataPoint[];
   className?: string;
   dropdownOptions?: string[];
+  variant?: 'default' | 'compact60';
 }
 
 export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
@@ -26,8 +27,11 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
   data,
   className,
   dropdownOptions = ["Weekly", "Monthly", "Yearly"],
+  variant = 'default',
 }) => {
   const [selectedRange, setSelectedRange] = React.useState(dropdownOptions[0] || "");
+
+  const isCompact = variant === 'compact60';
 
   const maxValue = React.useMemo(() => {
     return data.reduce((max, item) => (item.value > max ? item.value : max), 0);
@@ -59,7 +63,7 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
       )}
       aria-labelledby="activity-card-title"
     >
-      <CardHeader>
+      <CardHeader className={cn(isCompact ? 'p-3' : undefined)}>
         <div className="flex items-center justify-between">
           <CardTitle id="activity-card-title">{title}</CardTitle>
           <DropdownMenu>
@@ -79,10 +83,10 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
           </DropdownMenu>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4">
+      <CardContent className={cn(isCompact ? 'p-3 pt-0' : undefined)}>
+        <div className={cn("flex flex-col sm:flex-row items-start sm:items-end", isCompact ? 'gap-3' : 'gap-4')}>
           <div className="flex flex-col">
-            <p className="text-5xl font-bold tracking-tighter text-white">{totalValue}</p>
+            <p className={cn(isCompact ? 'text-3xl' : 'text-5xl', 'font-bold tracking-tighter text-white')}>{totalValue}</p>
             <CardDescription className="flex items-center gap-1 text-neutral-400">
               <TrendingUp className="h-4 w-4 text-emerald-400" />
               +12% from last week
@@ -91,7 +95,7 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
 
           <motion.div
             key={selectedRange}
-            className="flex h-28 w-full items-end justify-between gap-2"
+            className={cn("flex w-full items-end justify-between gap-2", isCompact ? 'h-12' : 'h-28')}
             variants={chartVariants}
             initial="hidden"
             animate="visible"

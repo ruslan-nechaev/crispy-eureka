@@ -231,7 +231,7 @@ export function App(): JSX.Element {
       {/* Нижняя панель: карточка активности над полем ввода */}
       <div className="absolute inset-x-0 bottom-2 z-40 flex flex-col items-center gap-3 px-3 transition-all duration-500 ease-out">
         <div className="w-full max-w-[340px] md:max-w-[560px] mx-auto pointer-events-auto">
-          <ActivityChartCard title="Activity" totalValue="21h" data={weeklyActivityData} />
+          <ActivityChartCard title="Activity" totalValue="21h" data={weeklyActivityData} variant="compact60" />
         </div>
         <div className="w-full max-w-[340px] md:max-w-[560px] mx-auto flex items-center justify-end">
           <button
