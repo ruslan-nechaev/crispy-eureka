@@ -168,7 +168,7 @@ export function App(): JSX.Element {
 
       {/* Чат: всегда смонтирован, переключаем видимость */}
       <div className={`absolute z-20 inset-x-0 top-[144px] md:top-[160px] bottom-[160px] md:bottom-[176px] flex justify-center px-0 transition-opacity duration-300 ${showTimeline ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'}`}>
-          <div className="w-full h-full relative flex justify-center">
+          <div className="w-full h-full relative flex justify_center">
             {/* Лента сообщений ниже, отступ сохранён под глобальную линию */}
             <div
               ref={listRef}
@@ -193,7 +193,7 @@ export function App(): JSX.Element {
                     />
                     {msg.text === GREETING_TEXT && (
                       <div className="mt-3 grid grid-cols-3 gap-2">
-                        <button onClick={() => setMessages((m) => [...m, { id: createId(), role: 'bot', text: TPL_QUESTION, variant: 'plain' }])} className="h-10 rounded-xl border border-white/30 bg-black/40 text-white text-[14px] font-semibold">Вопрос</button>
+                        <button onClick={() => setMessages((m) => [...m, { id: createId(), role: 'bot', text: TPL_QUESTION, variant: 'plain' }])} className="h-10 rounded-xl border border_white/30 bg-black/40 text-white text-[14px] font-semibold">Вопрос</button>
                         <button onClick={() => setMessages((m) => [...m, { id: createId(), role: 'bot', text: TPL_TECHNIQUE, variant: 'plain' }])} className="h-10 rounded-xl border border-white/30 bg-black/40 text-white text-[14px] font-semibold">Техника</button>
                         <button onClick={() => setMessages((m) => [...m, { id: createId(), role: 'bot', text: TPL_PLAN, variant: 'plain' }])} className="h-10 rounded-xl border border-white/30 bg-black/40 text-white text-[14px] font-semibold">План</button>
                       </div>
@@ -231,7 +231,7 @@ export function App(): JSX.Element {
       {/* Нижняя панель: карточка активности над полем ввода */}
       <div className="absolute inset-x-0 bottom-2 z-40 flex flex-col items-center gap-3 px-3 transition-all duration-500 ease-out">
         <div className="w-full max-w-[340px] md:max-w-[560px] mx-auto pointer-events-auto">
-          <ActivityChartCard title="Activity" totalValue="21h" data={weeklyActivityData} variant="compact60" />
+          <ActivityChartCard title="Activity" totalValue="21h" data={weeklyActivityData} variant="height3x" />
         </div>
         <div className="w-full max-w-[340px] md:max-w-[560px] mx-auto flex items-center justify-end">
           <button
@@ -262,7 +262,7 @@ export function App(): JSX.Element {
             </svg>
           </button>
         </div>
-        <div className="w-full max-w-[340px] md:max-w-[560px] mx-auto">
+        <div className="w-full max-w-[340px] md:max_w-[560px] mx-auto mt-3 mb-2">
           <OrbInput onSend={handleSend} />
         </div>
       </div>

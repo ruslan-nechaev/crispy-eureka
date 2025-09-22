@@ -18,7 +18,7 @@ interface ActivityChartCardProps {
   data: ActivityDataPoint[];
   className?: string;
   dropdownOptions?: string[];
-  variant?: 'default' | 'compact60';
+  variant?: 'default' | 'compact60' | 'height3x';
 }
 
 export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
@@ -32,6 +32,7 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
   const [selectedRange, setSelectedRange] = React.useState(dropdownOptions[0] || "");
 
   const isCompact = variant === 'compact60';
+  const isHeight3x = variant === 'height3x';
 
   const maxValue = React.useMemo(() => {
     return data.reduce((max, item) => (item.value > max ? item.value : max), 0);
@@ -95,7 +96,10 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
 
           <motion.div
             key={selectedRange}
-            className={cn("flex w-full items-end justify-between gap-2", isCompact ? 'h-12' : 'h-28')}
+            className={cn(
+              "flex w-full items-end justify-between gap-2",
+              isCompact ? 'h-12' : (isHeight3x ? 'h-[132px]' : 'h-28')
+            )}
             variants={chartVariants}
             initial="hidden"
             animate="visible"
