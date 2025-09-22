@@ -40,7 +40,7 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
   const isCompact = variant === 'compact60';
   const isHeight3x = variant === 'height3x';
   const isSmall = size === 'sm';
-  const minBarPx = 10;
+  const minBarPx = 14;
 
   const maxValue = React.useMemo(() => {
     return data.reduce((max, item) => (item.value > max ? item.value : max), 0);
