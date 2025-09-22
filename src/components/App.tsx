@@ -263,7 +263,7 @@ export function App(): JSX.Element {
           </button>
         </div>
         <div className="w-full max-w-[340px] md:max-w-[560px] mx-auto">
-          <OrbInput onSend={handleSend} />
+        <OrbInput onSend={handleSend} />
         </div>
       </div>
     </div>

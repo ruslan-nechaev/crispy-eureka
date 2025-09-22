@@ -91,8 +91,8 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
         </div>
       </CardHeader>
       <CardContent className={cn(isCompact ? 'p-3 pt-0' : (isSmall ? 'p-4 pt-0' : undefined))}>
-        <div className={cn("flex flex-col sm:flex-row items-start sm:items-end", isCompact ? 'gap-3' : (isSmall ? 'gap-3' : 'gap-4'))}>
-          <div className="flex flex-col">
+        <div className={cn('flex flex-row items-end', isCompact ? 'gap-3' : (isSmall ? 'gap-3' : 'gap-4'))}>
+          <div className={cn('flex flex-col', isSmall ? 'basis-2/5 min-w-[140px]' : undefined)}>
             <p className={cn(isCompact ? 'text-3xl' : (isSmall ? 'text-3xl sm:text-4xl' : 'text-5xl'), 'font-bold tracking-tighter text-white')}>{totalValue}</p>
             <CardDescription className="flex items-center gap-1 text-neutral-400">
               <TrendingUp className="h-4 w-4 text-emerald-400" />
@@ -100,6 +100,7 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
             </CardDescription>
           </div>
 
+          <div className={cn(isSmall ? 'basis-3/5 flex-1' : 'flex-1')}>
           <motion.div
             key={selectedRange}
             className={cn(
@@ -128,6 +129,7 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
               )
             })}
           </motion.div>
+          </div>
         </div>
       </CardContent>
     </Card>
