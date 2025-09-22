@@ -231,7 +231,7 @@ export function App(): JSX.Element {
       {/* Нижняя панель: карточка активности над полем ввода */}
       <div className="absolute inset-x-0 bottom-2 z-40 flex flex-col items-center gap-3 px-3 transition-all duration-500 ease-out">
         <div className="w-full max-w-[340px] md:max-w-[560px] mx-auto pointer-events-auto">
-          <ActivityChartCard title="Activity" totalValue="21h" data={weeklyActivityData} variant="height3x" />
+          <ActivityChartCard title="Activity" totalValue="21h" data={weeklyActivityData} variant="default" chartHeightPx={44*3} />
         </div>
         <div className="w-full max-w-[340px] md:max-w-[560px] mx-auto flex items-center justify-end">
           <button
@@ -262,7 +262,7 @@ export function App(): JSX.Element {
             </svg>
           </button>
         </div>
-        <div className="w-full max-w-[340px] md:max_w-[560px] mx-auto mt-3 mb-2">
+        <div className="w-full max-w-[340px] md:max-w-[560px] mx-auto mt-3 mb-2">
           <OrbInput onSend={handleSend} />
         </div>
       </div>
