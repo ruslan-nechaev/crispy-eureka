@@ -40,7 +40,7 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
   const isCompact = variant === 'compact60';
   const isHeight3x = variant === 'height3x';
   const isSmall = size === 'sm';
-  const minBarPx = 14;
+  const minBarPx = 16;
 
   const maxValue = React.useMemo(() => {
     return data.reduce((max, item) => (item.value > max ? item.value : max), 0);
@@ -99,7 +99,7 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className={cn(density==='dense40' ? 'min-w-[8rem] text-xs py-1' : undefined)}>
               {dropdownOptions.map((option) => (
                 <DropdownMenuItem key={option} onSelect={() => setSelectedRange(option)}>
                   {option}
@@ -112,8 +112,8 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
       <CardContent className={cn(
         isCompact ? 'p-3 pt-0' : (isSmall ? (density==='dense40' ? 'px-3 pb-3 pt-1' : 'p-4 pt-0') : undefined)
       )}>
-        <div className={cn('flex flex-row items-end', isCompact ? 'gap-3' : (isSmall ? (density==='dense40' ? 'gap-2' : 'gap-3') : 'gap-4'))}>
-          <div className={cn('flex flex-col', isSmall ? 'basis-1/4 min-w-[108px]' : undefined)}>
+        <div className={cn('flex flex-row items-end', isCompact ? 'gap-3' : (isSmall ? (density==='dense40' ? 'gap-2.5' : 'gap-3') : 'gap-4'))}>
+          <div className={cn('flex flex-col', isSmall ? 'basis-1/5 min-w-[100px]' : undefined)}>
             <p
               className={cn(
                 isCompact
@@ -134,11 +134,11 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
             </CardDescription>
           </div>
 
-          <div className={cn(isSmall ? 'basis-3/4 flex-1' : 'flex-1')}>
+          <div className={cn(isSmall ? 'basis-4/5 flex-1' : 'flex-1')}>
           <motion.div
             key={selectedRange}
             className={cn(
-              "flex w-full items-end justify-between gap-2",
+              "flex w-full items-end justify-between gap-3",
               !chartHeightPx && (isCompact ? 'h-12' : (isSmall ? 'h-14' : (isHeight3x ? 'h-[132px]' : 'h-28')))
             )}
             style={chartHeightPx ? { height: chartHeightPx } : undefined}
@@ -153,7 +153,7 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
               return (
               <div key={index} className="flex h-full flex-1 flex-col items-center justify-end gap-2" role="presentation">
                 <motion.div
-                  className="w-full max-w-[26px] sm:max-w-[24px] md:max-w-[28px] rounded-md bg-neutral-300"
+                  className="w-full max-w-[30px] sm:max-w-[32px] md:max-w-[36px] rounded-md bg-neutral-300"
                   style={pxHeight !== undefined ? { height: pxHeight } : { height: `${maxValue > 0 ? ratio * 100 : 0}%` }}
                   variants={barVariants}
                   aria-label={`${item.day}: ${item.value} hours`}
