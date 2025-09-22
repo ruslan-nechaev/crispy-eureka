@@ -61,7 +61,7 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
   return (
     <Card
       className={cn(
-        "w-full max-w-md rounded-2xl border border-white/15 bg-neutral-900/70 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur",
+        "w-full rounded-2xl border border-white/15 bg-neutral-900/70 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur",
         className
       )}
       aria-labelledby="activity-card-title"
