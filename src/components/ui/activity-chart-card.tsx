@@ -38,6 +38,7 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
   const isCompact = variant === 'compact60';
   const isHeight3x = variant === 'height3x';
   const isSmall = size === 'sm';
+  const minBarPx = 10;
 
   const maxValue = React.useMemo(() => {
     return data.reduce((max, item) => (item.value > max ? item.value : max), 0);
@@ -111,17 +112,21 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
             animate="visible"
             aria-label="Activity chart"
           >
-            {data.map((item, index) => (
+            {data.map((item, index) => {
+              const ratio = maxValue > 0 ? item.value / maxValue : 0;
+              const pxHeight = chartHeightPx ? Math.max(minBarPx, Math.round(ratio * chartHeightPx)) : undefined;
+              return (
               <div key={index} className="flex h-full w-full flex-col items-center justify-end gap-2" role="presentation">
                 <motion.div
-                  className="w-full rounded-md bg-neutral-300"
-                  style={{ height: `${maxValue > 0 ? (item.value / maxValue) * 100 : 0}%` }}
+                  className="w-full rounded-[4px] bg-neutral-300"
+                  style={pxHeight !== undefined ? { height: pxHeight } : { height: `${maxValue > 0 ? ratio * 100 : 0}%` }}
                   variants={barVariants}
                   aria-label={`${item.day}: ${item.value} hours`}
                 />
-                <span className="text-xs text-neutral-400">{item.day}</span>
+                <span className="text-[10px] sm:text-xs text-neutral-400">{item.day}</span>
               </div>
-            ))}
+              )
+            })}
           </motion.div>
         </div>
       </CardContent>
