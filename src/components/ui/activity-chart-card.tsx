@@ -76,7 +76,14 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
         isCompact ? 'p-3' : (isSmall ? (density==='dense40' ? 'px-3 py-1.5' : 'p-4') : undefined)
       )}>
         <div className="flex items-center justify-between">
-          <CardTitle id="activity-card-title" className={cn(isSmall && density==='dense40' ? 'text-xl' : undefined)}>{title}</CardTitle>
+          <CardTitle
+            id="activity-card-title"
+            className={cn(
+              isSmall && density==='dense40' ? 'text-lg' : undefined
+            )}
+          >
+            {title}
+          </CardTitle>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -107,13 +114,23 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
       )}>
         <div className={cn('flex flex-row items-end', isCompact ? 'gap-3' : (isSmall ? (density==='dense40' ? 'gap-2' : 'gap-3') : 'gap-4'))}>
           <div className={cn('flex flex-col', isSmall ? 'basis-1/4 min-w-[108px]' : undefined)}>
-            <p className={cn(
-              isCompact ? 'text-3xl'
-              : (isSmall ? (density==='dense40' ? 'text-2xl' : 'text-3xl sm:text-4xl') : 'text-5xl'),
-              'font-bold tracking-tighter text-white')}>{totalValue}</p>
-            <CardDescription className={cn('flex items-center gap-1 text-neutral-400', density==='dense40' ? 'text-xs' : undefined)}>
-              <TrendingUp className={cn('text-emerald-400', density==='dense40' ? 'h-3.5 w-3.5' : 'h-4 w-4')} />
-              +12% from last week
+            <p
+              className={cn(
+                isCompact
+                  ? 'text-3xl'
+                  : (isSmall ? (density==='dense40' ? 'text-2xl' : 'text-3xl sm:text-4xl') : 'text-5xl'),
+                'font-bold tracking-tighter text-white')}
+            >
+              {totalValue}
+            </p>
+            <CardDescription
+              className={cn('text-neutral-400 leading-tight', density==='dense40' ? 'text-xs' : 'text-sm')}
+            >
+              <span className="flex items-center gap-1">
+                <TrendingUp className={cn('text-emerald-400', density==='dense40' ? 'h-3.5 w-3.5' : 'h-4 w-4')} />
+                +12% from
+              </span>
+              <span className="block">last week</span>
             </CardDescription>
           </div>
 
