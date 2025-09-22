@@ -103,7 +103,7 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
           <motion.div
             key={selectedRange}
             className={cn(
-              "flex w-full items-end justify-between gap-2",
+              "flex w-full items-end justify-between gap-3",
               !chartHeightPx && (isCompact ? 'h-12' : (isSmall ? 'h-14' : (isHeight3x ? 'h-[132px]' : 'h-28')))
             )}
             style={chartHeightPx ? { height: chartHeightPx } : undefined}
@@ -116,9 +116,9 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
               const ratio = maxValue > 0 ? item.value / maxValue : 0;
               const pxHeight = chartHeightPx ? Math.max(minBarPx, Math.round(ratio * chartHeightPx)) : undefined;
               return (
-              <div key={index} className="flex h-full w-full flex-col items-center justify-end gap-2" role="presentation">
+              <div key={index} className="flex h-full flex-1 flex-col items-center justify-end gap-2" role="presentation">
                 <motion.div
-                  className="w-full rounded-[4px] bg-neutral-300"
+                  className="mx-auto w-[8px] sm:w-[10px] md:w-[12px] rounded-[3px] bg-neutral-300"
                   style={pxHeight !== undefined ? { height: pxHeight } : { height: `${maxValue > 0 ? ratio * 100 : 0}%` }}
                   variants={barVariants}
                   aria-label={`${item.day}: ${item.value} hours`}
