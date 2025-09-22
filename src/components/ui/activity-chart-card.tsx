@@ -73,7 +73,7 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
       aria-labelledby="activity-card-title"
     >
       <CardHeader className={cn(
-        isCompact ? 'p-3' : (isSmall ? (density==='dense40' ? 'px-3 py-2' : 'p-4') : undefined)
+        isCompact ? 'p-3' : (isSmall ? (density==='dense40' ? 'px-3 py-1.5' : 'p-4') : undefined)
       )}>
         <div className="flex items-center justify-between">
           <CardTitle id="activity-card-title" className={cn(isSmall && density==='dense40' ? 'text-xl' : undefined)}>{title}</CardTitle>
@@ -101,10 +101,10 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
           <div className={cn('flex flex-col', isSmall ? 'basis-1/3 min-w-[120px]' : undefined)}>
             <p className={cn(
               isCompact ? 'text-3xl'
-              : (isSmall ? (density==='dense40' ? 'text-2xl sm:text-3xl' : 'text-3xl sm:text-4xl') : 'text-5xl'),
+              : (isSmall ? (density==='dense40' ? 'text-2xl' : 'text-3xl sm:text-4xl') : 'text-5xl'),
               'font-bold tracking-tighter text-white')}>{totalValue}</p>
-            <CardDescription className="flex items-center gap-1 text-neutral-400">
-              <TrendingUp className="h-4 w-4 text-emerald-400" />
+            <CardDescription className={cn('flex items-center gap-1 text-neutral-400', density==='dense40' ? 'text-xs' : undefined)}>
+              <TrendingUp className={cn('text-emerald-400', density==='dense40' ? 'h-3.5 w-3.5' : 'h-4 w-4')} />
               +12% from last week
             </CardDescription>
           </div>
