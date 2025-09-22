@@ -21,6 +21,7 @@ interface ActivityChartCardProps {
   variant?: 'default' | 'compact60' | 'height3x';
   chartHeightPx?: number;
   size?: 'md' | 'sm';
+  density?: 'normal' | 'dense40';
 }
 
 export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
@@ -32,6 +33,7 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
   variant = 'default',
   chartHeightPx,
   size = 'md',
+  density = 'normal',
 }) => {
   const [selectedRange, setSelectedRange] = React.useState(dropdownOptions[0] || "");
 
@@ -70,9 +72,11 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
       )}
       aria-labelledby="activity-card-title"
     >
-      <CardHeader className={cn(isCompact ? 'p-3' : (isSmall ? 'p-4' : undefined))}>
+      <CardHeader className={cn(
+        isCompact ? 'p-3' : (isSmall ? (density==='dense40' ? 'px-3 py-2' : 'p-4') : undefined)
+      )}>
         <div className="flex items-center justify-between">
-          <CardTitle id="activity-card-title">{title}</CardTitle>
+          <CardTitle id="activity-card-title" className={cn(isSmall && density==='dense40' ? 'text-xl' : undefined)}>{title}</CardTitle>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm" className="flex items-center gap-1 text-sm" aria-haspopup="true">
@@ -90,10 +94,15 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
           </DropdownMenu>
         </div>
       </CardHeader>
-      <CardContent className={cn(isCompact ? 'p-3 pt-0' : (isSmall ? 'p-4 pt-0' : undefined))}>
-        <div className={cn('flex flex-row items-end', isCompact ? 'gap-3' : (isSmall ? 'gap-3' : 'gap-4'))}>
+      <CardContent className={cn(
+        isCompact ? 'p-3 pt-0' : (isSmall ? (density==='dense40' ? 'px-3 pb-3 pt-1' : 'p-4 pt-0') : undefined)
+      )}>
+        <div className={cn('flex flex-row items-end', isCompact ? 'gap-3' : (isSmall ? (density==='dense40' ? 'gap-2' : 'gap-3') : 'gap-4'))}>
           <div className={cn('flex flex-col', isSmall ? 'basis-1/3 min-w-[120px]' : undefined)}>
-            <p className={cn(isCompact ? 'text-3xl' : (isSmall ? 'text-3xl sm:text-4xl' : 'text-5xl'), 'font-bold tracking-tighter text-white')}>{totalValue}</p>
+            <p className={cn(
+              isCompact ? 'text-3xl'
+              : (isSmall ? (density==='dense40' ? 'text-2xl sm:text-3xl' : 'text-3xl sm:text-4xl') : 'text-5xl'),
+              'font-bold tracking-tighter text-white')}>{totalValue}</p>
             <CardDescription className="flex items-center gap-1 text-neutral-400">
               <TrendingUp className="h-4 w-4 text-emerald-400" />
               +12% from last week
