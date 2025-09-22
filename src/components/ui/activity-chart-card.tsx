@@ -79,7 +79,15 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
           <CardTitle id="activity-card-title" className={cn(isSmall && density==='dense40' ? 'text-xl' : undefined)}>{title}</CardTitle>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="flex items-center gap-1 text-sm" aria-haspopup="true">
+              <Button
+                variant="ghost"
+                size="sm"
+                className={cn(
+                  "flex items-center gap-1 text-sm",
+                  isSmall && density==='dense40' ? 'h-7 px-2 text-xs' : undefined
+                )}
+                aria-haspopup="true"
+              >
                 {selectedRange}
                 <ChevronDown className="h-4 w-4" />
               </Button>
@@ -98,7 +106,7 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
         isCompact ? 'p-3 pt-0' : (isSmall ? (density==='dense40' ? 'px-3 pb-3 pt-1' : 'p-4 pt-0') : undefined)
       )}>
         <div className={cn('flex flex-row items-end', isCompact ? 'gap-3' : (isSmall ? (density==='dense40' ? 'gap-2' : 'gap-3') : 'gap-4'))}>
-          <div className={cn('flex flex-col', isSmall ? 'basis-1/3 min-w-[120px]' : undefined)}>
+          <div className={cn('flex flex-col', isSmall ? 'basis-1/4 min-w-[108px]' : undefined)}>
             <p className={cn(
               isCompact ? 'text-3xl'
               : (isSmall ? (density==='dense40' ? 'text-2xl' : 'text-3xl sm:text-4xl') : 'text-5xl'),
@@ -109,7 +117,7 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
             </CardDescription>
           </div>
 
-          <div className={cn(isSmall ? 'basis-2/3 flex-1' : 'flex-1')}>
+          <div className={cn(isSmall ? 'basis-3/4 flex-1' : 'flex-1')}>
           <motion.div
             key={selectedRange}
             className={cn(
