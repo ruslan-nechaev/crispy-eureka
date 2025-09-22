@@ -92,7 +92,7 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
       </CardHeader>
       <CardContent className={cn(isCompact ? 'p-3 pt-0' : (isSmall ? 'p-4 pt-0' : undefined))}>
         <div className={cn('flex flex-row items-end', isCompact ? 'gap-3' : (isSmall ? 'gap-3' : 'gap-4'))}>
-          <div className={cn('flex flex-col', isSmall ? 'basis-2/5 min-w-[140px]' : undefined)}>
+          <div className={cn('flex flex-col', isSmall ? 'basis-1/3 min-w-[120px]' : undefined)}>
             <p className={cn(isCompact ? 'text-3xl' : (isSmall ? 'text-3xl sm:text-4xl' : 'text-5xl'), 'font-bold tracking-tighter text-white')}>{totalValue}</p>
             <CardDescription className="flex items-center gap-1 text-neutral-400">
               <TrendingUp className="h-4 w-4 text-emerald-400" />
@@ -100,7 +100,7 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
             </CardDescription>
           </div>
 
-          <div className={cn(isSmall ? 'basis-3/5 flex-1' : 'flex-1')}>
+          <div className={cn(isSmall ? 'basis-2/3 flex-1' : 'flex-1')}>
           <motion.div
             key={selectedRange}
             className={cn(
@@ -119,7 +119,7 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
               return (
               <div key={index} className="flex h-full flex-1 flex-col items-center justify-end gap-2" role="presentation">
                 <motion.div
-                  className="w-full max-w-[22px] sm:max-w-[24px] md:max-w-[28px] rounded-md bg-neutral-300"
+                  className="w-full max-w-[26px] sm:max-w-[24px] md:max-w-[28px] rounded-md bg-neutral-300"
                   style={pxHeight !== undefined ? { height: pxHeight } : { height: `${maxValue > 0 ? ratio * 100 : 0}%` }}
                   variants={barVariants}
                   aria-label={`${item.day}: ${item.value} hours`}
