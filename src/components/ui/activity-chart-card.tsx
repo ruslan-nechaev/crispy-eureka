@@ -20,6 +20,7 @@ interface ActivityChartCardProps {
   dropdownOptions?: string[];
   variant?: 'default' | 'compact60' | 'height3x';
   chartHeightPx?: number;
+  size?: 'md' | 'sm';
 }
 
 export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
@@ -30,11 +31,13 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
   dropdownOptions = ["Weekly", "Monthly", "Yearly"],
   variant = 'default',
   chartHeightPx,
+  size = 'md',
 }) => {
   const [selectedRange, setSelectedRange] = React.useState(dropdownOptions[0] || "");
 
   const isCompact = variant === 'compact60';
   const isHeight3x = variant === 'height3x';
+  const isSmall = size === 'sm';
 
   const maxValue = React.useMemo(() => {
     return data.reduce((max, item) => (item.value > max ? item.value : max), 0);
@@ -66,7 +69,7 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
       )}
       aria-labelledby="activity-card-title"
     >
-      <CardHeader className={cn(isCompact ? 'p-3' : undefined)}>
+      <CardHeader className={cn(isCompact ? 'p-3' : (isSmall ? 'p-4' : undefined))}>
         <div className="flex items-center justify-between">
           <CardTitle id="activity-card-title">{title}</CardTitle>
           <DropdownMenu>
@@ -86,10 +89,10 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
           </DropdownMenu>
         </div>
       </CardHeader>
-      <CardContent className={cn(isCompact ? 'p-3 pt-0' : undefined)}>
-        <div className={cn("flex flex-col sm:flex-row items-start sm:items-end", isCompact ? 'gap-3' : 'gap-4')}>
+      <CardContent className={cn(isCompact ? 'p-3 pt-0' : (isSmall ? 'p-4 pt-0' : undefined))}>
+        <div className={cn("flex flex-col sm:flex-row items-start sm:items-end", isCompact ? 'gap-3' : (isSmall ? 'gap-3' : 'gap-4'))}>
           <div className="flex flex-col">
-            <p className={cn(isCompact ? 'text-3xl' : 'text-5xl', 'font-bold tracking-tighter text-white')}>{totalValue}</p>
+            <p className={cn(isCompact ? 'text-3xl' : (isSmall ? 'text-3xl sm:text-4xl' : 'text-5xl'), 'font-bold tracking-tighter text-white')}>{totalValue}</p>
             <CardDescription className="flex items-center gap-1 text-neutral-400">
               <TrendingUp className="h-4 w-4 text-emerald-400" />
               +12% from last week
@@ -100,7 +103,7 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
             key={selectedRange}
             className={cn(
               "flex w-full items-end justify-between gap-2",
-              !chartHeightPx && (isCompact ? 'h-12' : (isHeight3x ? 'h-[132px]' : 'h-28'))
+              !chartHeightPx && (isCompact ? 'h-12' : (isSmall ? 'h-14' : (isHeight3x ? 'h-[132px]' : 'h-28')))
             )}
             style={chartHeightPx ? { height: chartHeightPx } : undefined}
             variants={chartVariants}
