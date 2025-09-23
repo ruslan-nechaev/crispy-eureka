@@ -220,9 +220,24 @@ export function App(): JSX.Element {
                     />
                     {msg.text === GREETING_TEXT && (
                       <div className="mt-3 grid grid-cols-3 gap-2">
-                        <button onClick={() => setMessages((m) => [...m, { id: createId(), role: 'bot', text: TPL_QUESTION, variant: 'plain' }])} className="h-10 rounded-xl border border_white/30 bg-black/40 text-white text-[14px] font-semibold">Вопрос</button>
-                        <button onClick={() => setMessages((m) => [...m, { id: createId(), role: 'bot', text: TPL_TECHNIQUE, variant: 'plain' }])} className="h-10 rounded-xl border border-white/30 bg-black/40 text-white text-[14px] font-semibold">Техника</button>
-                        <button onClick={() => setMessages((m) => [...m, { id: createId(), role: 'bot', text: TPL_PLAN, variant: 'plain' }])} className="h-10 rounded-xl border border-white/30 bg-black/40 text-white text-[14px] font-semibold">План</button>
+                        <button
+                          onClick={() => setMessages((m) => [...m, { id: createId(), role: 'bot', text: TPL_QUESTION, variant: 'plain' }])}
+                          className="h-9 px-3 rounded-lg border border-white/20 bg-neutral-800 text-neutral-100 text-[13px] font-medium hover:bg-neutral-700 active:scale-95"
+                        >
+                          Вопрос
+                        </button>
+                        <button
+                          onClick={() => setMessages((m) => [...m, { id: createId(), role: 'bot', text: TPL_TECHNIQUE, variant: 'plain' }])}
+                          className="h-9 px-3 rounded-lg border border-white/20 bg-neutral-800 text-neutral-100 text-[13px] font-medium hover:bg-neutral-700 active:scale-95"
+                        >
+                          Техника
+                        </button>
+                        <button
+                          onClick={() => setMessages((m) => [...m, { id: createId(), role: 'bot', text: TPL_PLAN, variant: 'plain' }])}
+                          className="h-9 px-3 rounded-lg border border-white/20 bg-neutral-800 text-neutral-100 text-[13px] font-medium hover:bg-neutral-700 active:scale-95"
+                        >
+                          План
+                        </button>
                       </div>
                     )}
                   </div>
