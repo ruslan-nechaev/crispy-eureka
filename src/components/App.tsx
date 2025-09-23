@@ -10,7 +10,7 @@ import { OrbInput } from '@/components/ui/animated-input'
 import { PearlButton } from '@/components/ui/pearl-button'
 // Removed footer/HUD: render only Plan button above input
 import RadialOrbitalTimeline from '@/components/ui/radial-orbital-timeline'
-import { Calendar, FileText, Code, User, Clock, Sparkles } from 'lucide-react'
+import { Calendar, FileText, Code, User, Clock, Sparkles, Menu, MessageSquarePlus } from 'lucide-react'
 import WeatherButton from '@/components/ui/button'
 import { routeWebhookPayload, mapPlanToTimeline } from '@/lib/plan-router'
 import { BlurText } from '@/components/ui/animated-blur-text'
@@ -148,6 +148,25 @@ export function App(): JSX.Element {
       {/* HUD removed */}
       {/* Lightweight background on main screen for smoothness */}
       <SilkBackground showCopy={false} mode="lite" />
+      {/* Top corner icon buttons with 16px (1rem) edge spacing */}
+      <div className="absolute top-4 left-4 z-40">
+        <button
+          type="button"
+          aria-label="Menu"
+          className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/25 text-white hover:bg-white/10 active:scale-95"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+      </div>
+      <div className="absolute top-4 right-4 z-40">
+        <button
+          type="button"
+          aria-label="Chat Plus"
+          className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/25 text-white hover:bg-white/10 active:scale-95"
+        >
+          <MessageSquarePlus className="h-5 w-5" />
+        </button>
+      </div>
       {/* Top Plus button with same edge gap as bottom */}
       <div className="absolute inset-x-0 top-2 z-40 flex justify-center px-3 pointer-events-none">
         <button
