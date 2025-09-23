@@ -148,35 +148,32 @@ export function App(): JSX.Element {
       {/* HUD removed */}
       {/* Lightweight background on main screen for smoothness */}
       <SilkBackground showCopy={false} mode="lite" />
-      {/* Top corner icon buttons with 16px (1rem) edge spacing */}
-      <div className="absolute top-4 left-4 z-40">
-        <button
-          type="button"
-          aria-label="Menu"
-          className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/25 text-white hover:bg-white/10 active:scale-95"
-        >
-          <Menu className="h-5 w-5" />
-        </button>
-      </div>
-      <div className="absolute top-4 right-4 z-40">
-        <button
-          type="button"
-          aria-label="Chat Plus"
-          className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/25 text-white hover:bg-white/10 active:scale-95"
-        >
-          <MessageSquarePlus className="h-5 w-5" />
-        </button>
-      </div>
-      {/* Top Plus button with same edge gap as bottom */}
-      <div className="absolute inset-x-0 top-2 z-40 flex justify-center px-3 pointer-events-none">
-        <button
-          type="button"
-          className="pointer-events-auto flex items-center gap-2 rounded-full bg-[#3F2EA6] px-5 py-2 md:px-6 md:py-2.5 text-[#C9B8FF] font-semibold shadow-[0_2px_12px_rgba(63,46,166,0.45)]"
-          aria-label="Перейти на Plus"
-        >
-          <Sparkles className="h-4 w-4 text-[#C9B8FF]/90" />
-          <span className="text-sm md:text-base">Перейти на Plus</span>
-        </button>
+      {/* Top bar: icons left/right and Plus centered on same baseline */}
+      <div className="absolute inset-x-0 top-2 z-40 px-4 pointer-events-none">
+        <div className="flex items-center justify-between w-full">
+          <button
+            type="button"
+            aria-label="Menu"
+            className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-xl text-white hover:bg-white/10 active:scale-95"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            className="pointer-events-auto flex items-center gap-2 rounded-full bg-[#3F2EA6] px-5 py-2 md:px-6 md:py-2.5 text-[#C9B8FF] font-semibold shadow-[0_2px_12px_rgba(63,46,166,0.45)]"
+            aria-label="Перейти на Plus"
+          >
+            <Sparkles className="h-4 w-4 text-[#C9B8FF]/90" />
+            <span className="text-sm md:text-base">Перейти на Plus</span>
+          </button>
+          <button
+            type="button"
+            aria-label="Chat Plus"
+            className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-xl text-white hover:bg-white/10 active:scale-95"
+          >
+            <MessageSquarePlus className="h-5 w-5" />
+          </button>
+        </div>
       </div>
       {/* Activity card above input on the left */}
       {/* Временная навигация: держим смонтированной, переключаем видимость CSS-классами */}
