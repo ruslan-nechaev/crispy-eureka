@@ -42,9 +42,14 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
   const isSmall = size === 'sm';
   const minBarPx = 16;
 
+  const displayData = React.useMemo(() => {
+    const factor = selectedRange === 'Monthly' ? 4 : selectedRange === 'Yearly' ? 52 : 1;
+    return data.map((d) => ({ ...d, value: d.value * factor }));
+  }, [data, selectedRange]);
+
   const maxValue = React.useMemo(() => {
-    return data.reduce((max, item) => (item.value > max ? item.value : max), 0);
-  }, [data]);
+    return displayData.reduce((max, item) => (item.value > max ? item.value : max), 0);
+  }, [displayData]);
 
   const chartVariants = {
     hidden: { opacity: 0 },
@@ -99,7 +104,13 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className={cn(density==='dense40' ? 'min-w-[8rem] text-xs py-1' : undefined)}>
+            <DropdownMenuContent
+              align="end"
+              className={cn(
+                'rounded-md border border-border bg-popover shadow-lg',
+                density==='dense40' ? 'min-w-[8rem] text-xs py-1' : 'min-w-[10rem] text-sm py-1.5'
+              )}
+            >
               {dropdownOptions.map((option) => (
                 <DropdownMenuItem key={option} onSelect={() => setSelectedRange(option)}>
                   {option}
@@ -153,7 +164,7 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
             animate="visible"
             aria-label="Activity chart"
           >
-            {data.map((item, index) => {
+            {displayData.map((item, index) => {
               const ratio = maxValue > 0 ? item.value / maxValue : 0;
               const pxHeight = chartHeightPx ? Math.max(minBarPx, Math.round(ratio * chartHeightPx)) : undefined;
               return (
