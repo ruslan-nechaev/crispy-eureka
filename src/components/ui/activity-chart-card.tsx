@@ -124,12 +124,18 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
               {totalValue}
             </p>
             <CardDescription
-              className={cn('text-neutral-400 leading-tight', density==='dense40' ? 'text-xs' : 'text-sm')}
+              className={cn(
+                'text-neutral-400 leading-tight relative',
+                density==='dense40' ? 'text-xs pl-5' : 'text-sm pl-6'
+              )}
             >
-              <span className="flex items-center gap-1">
-                <TrendingUp className={cn('text-emerald-400', density==='dense40' ? 'h-3.5 w-3.5' : 'h-4 w-4')} />
-                +12% from
-              </span>
+              <TrendingUp
+                className={cn(
+                  'absolute left-0 top-1/2 -translate-y-1/2 text-emerald-400',
+                  density==='dense40' ? 'h-3.5 w-3.5' : 'h-4 w-4'
+                )}
+              />
+              <span className="block">+12% from</span>
               <span className="block">last week</span>
             </CardDescription>
           </div>
