@@ -41,6 +41,50 @@ export function App(): JSX.Element {
 
   const createId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
 
+  // --- Telegram WebApp persistent state (per device) ---
+  const userIdRef = useRef<string>('guest')
+  const getTelegramUserId = (): string => {
+    try {
+      const uid = (window as any)?.Telegram?.WebApp?.initDataUnsafe?.user?.id
+      return uid ? String(uid) : 'guest'
+    } catch {
+      return 'guest'
+    }
+  }
+
+  // Restore state once on mount
+  useEffect(() => {
+    userIdRef.current = getTelegramUserId()
+    try {
+      const key = `user_state_${userIdRef.current}`
+      const raw = typeof window !== 'undefined' ? localStorage.getItem(key) : null
+      if (raw) {
+        const parsed = JSON.parse(raw)
+        if (Array.isArray(parsed?.messages)) setMessages(parsed.messages as ChatMessage[])
+        if (Array.isArray(parsed?.planTimeline)) setPlanTimeline(parsed.planTimeline as any[])
+        if (typeof parsed?.showTimeline === 'boolean') setShowTimeline(Boolean(parsed.showTimeline))
+      }
+    } catch (err) {
+      console.warn('State restore failed', err)
+    }
+  }, [])
+
+  // Persist state after every interaction/update
+  useEffect(() => {
+    try {
+      const key = `user_state_${userIdRef.current}`
+      const toSave = {
+        messages,
+        planTimeline,
+        showTimeline,
+        savedAt: Date.now(),
+      }
+      if (typeof window !== 'undefined') localStorage.setItem(key, JSON.stringify(toSave))
+    } catch (err) {
+      // Ignore storage quota / private mode errors to avoid breaking UI
+    }
+  }, [messages, planTimeline, showTimeline])
+
   const handleSend = useCallback(async (text: string): Promise<void> => {
     const userMsg: ChatMessage = { id: createId(), role: 'user', text, variant: 'bubble' }
     setMessages((m) => [...m, userMsg])
