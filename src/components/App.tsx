@@ -10,7 +10,7 @@ import { OrbInput } from '@/components/ui/animated-input'
 import { PearlButton } from '@/components/ui/pearl-button'
 // Removed footer/HUD: render only Plan button above input
 import RadialOrbitalTimeline from '@/components/ui/radial-orbital-timeline'
-import { Calendar, FileText, Code, User, Clock } from 'lucide-react'
+import { Calendar, FileText, Code, User, Clock, Sparkles } from 'lucide-react'
 import WeatherButton from '@/components/ui/button'
 import { routeWebhookPayload, mapPlanToTimeline } from '@/lib/plan-router'
 import { BlurText } from '@/components/ui/animated-blur-text'
@@ -148,6 +148,17 @@ export function App(): JSX.Element {
       {/* HUD removed */}
       {/* Lightweight background on main screen for smoothness */}
       <SilkBackground showCopy={false} mode="lite" />
+      {/* Top Plus button with same edge gap as bottom */}
+      <div className="absolute inset-x-0 top-2 z-40 flex justify-center px-3 pointer-events-none">
+        <button
+          type="button"
+          className="pointer-events-auto flex items-center gap-2 rounded-full bg-[#3F2EA6] px-5 py-2 md:px-6 md:py-2.5 text-[#C9B8FF] font-semibold shadow-[0_2px_12px_rgba(63,46,166,0.45)]"
+          aria-label="Перейти на Plus"
+        >
+          <Sparkles className="h-4 w-4 text-[#C9B8FF]/90" />
+          <span className="text-sm md:text-base">Перейти на Plus</span>
+        </button>
+      </div>
       {/* Activity card above input on the left */}
       {/* Временная навигация: держим смонтированной, переключаем видимость CSS-классами */}
       <div className={`absolute inset-0 z-30 flex items-center justify-center transition-all duration-500 ease-out ${showTimeline ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
