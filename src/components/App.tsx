@@ -149,7 +149,7 @@ export function App(): JSX.Element {
       {/* Lightweight background on main screen for smoothness */}
       <SilkBackground showCopy={false} mode="lite" />
       {/* Top bar: icons left/right and Plus centered on same baseline */}
-      <div className="absolute inset-x-0 top-2 z-40 px-4 pointer-events-none">
+      <div className="absolute inset-x-0 top-3 z-40 px-4 pointer-events-none">
         <div className="flex items-center justify-between w-full">
           <button
             type="button"
@@ -194,7 +194,7 @@ export function App(): JSX.Element {
         </div>
 
       {/* Чат: всегда смонтирован, переключаем видимость */}
-      <div className={`absolute z-20 inset-x-0 top-[144px] md:top-[160px] bottom-[160px] md:bottom-[176px] flex justify-center px-0 transition-opacity duration-300 ${showTimeline ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'}`}>
+      <div className={`absolute z-20 inset-x-0 top-[60px] md:top-[72px] bottom-[160px] md:bottom-[176px] flex justify-center px-0 transition-opacity duration-300 ${showTimeline ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'}`}>
           <div className="w-full h-full relative flex justify_center">
             {/* Лента сообщений ниже, отступ сохранён под глобальную линию */}
             <div
