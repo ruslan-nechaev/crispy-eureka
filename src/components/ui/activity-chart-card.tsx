@@ -108,8 +108,7 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
               align="end"
               sideOffset={6 as any}
               className={cn(
-                // Force light popover like on the screenshot
-                'rounded-lg border bg-white text-neutral-900 shadow-xl',
+                'rounded-xl border border-white/15 bg-neutral-900 text-white shadow-xl',
                 density==='dense40'
                   ? 'min-w-[7rem] text-[11px] py-1'
                   : 'min-w-[9rem] text-xs sm:text-sm py-1.5'
@@ -118,7 +117,11 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
               {dropdownOptions.map((option) => (
                 <DropdownMenuItem
                   key={option}
-                  className="cursor-pointer rounded-md px-2 py-1.5 hover:bg-neutral-100 active:bg-neutral-200"
+                  className={cn(
+                    'cursor-pointer rounded-md px-2 hover:bg-white/10',
+                    density==='dense40' ? 'py-1' : 'py-1.5',
+                    selectedRange === option ? 'bg-white/10' : undefined
+                  )}
                   onSelect={() => setSelectedRange(option)}
                 >
                   {option}
