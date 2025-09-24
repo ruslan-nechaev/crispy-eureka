@@ -142,18 +142,13 @@ export function App(): JSX.Element {
             // silently ignore
           }
         })
-        if (opened === false && typeof tg.openTelegramLink === 'function') {
+        if ((opened === false || typeof opened === 'undefined') && typeof tg.openTelegramLink === 'function') {
           // Fallback inside Telegram to avoid closing the WebApp
           tg.openTelegramLink(link)
         }
       } else {
-        // openInvoice not present — try openTelegramLink inside Telegram container
-        if (tg && typeof tg.openTelegramLink === 'function') {
-          tg.openTelegramLink(link)
-        } else {
-          // No Telegram WebApp context (e.g., browser preview)
-          alert('Откройте приложение в Telegram, чтобы оплатить в окне WebApp.')
-        }
+        // If WebApp object missing (unlikely in TG), try openTelegramLink; otherwise no-op
+        if (tg && typeof tg.openTelegramLink === 'function') tg.openTelegramLink(link)
       }
     } catch (e) {
       alert('Не удалось открыть оплату. Попробуйте позже.')
@@ -172,6 +167,7 @@ export function App(): JSX.Element {
       } catch {}
     }
     tg.onEvent('invoiceClosed', handler)
+    // Also handle 'themeChanged' or other events if needed later
     return () => {
       try { tg.offEvent && tg.offEvent('invoiceClosed', handler) } catch {}
     }
