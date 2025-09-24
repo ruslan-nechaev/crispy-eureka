@@ -25,6 +25,7 @@ export function App(): JSX.Element {
   // Dynamic timeline data from routed plan
   const [planTimeline, setPlanTimeline] = useState<any[] | null>(null)
   const [isPlus, setIsPlus] = useState<boolean>(false)
+  const [isWebApp, setIsWebApp] = useState<boolean>(false)
 
   // Webhook for outbound user messages
   const WEBHOOK_URL = 'https://fit-ai-fg.app.n8n.cloud/webhook-test/20123bc1-5e8c-429d-8790-f20e6138b0f3'
@@ -59,6 +60,7 @@ export function App(): JSX.Element {
     try {
       const tg: any = (window as any)?.Telegram?.WebApp
       try { tg?.ready && tg.ready(); tg?.expand && tg.expand(); } catch {}
+      setIsWebApp(Boolean(tg && tg.initDataUnsafe?.user))
       const key = `user_state_${userIdRef.current}`
       const raw = typeof window !== 'undefined' ? localStorage.getItem(key) : null
       if (raw) {
@@ -105,6 +107,15 @@ export function App(): JSX.Element {
     } catch {}
   }, [messages, planTimeline, showTimeline, isPlus])
 
+  // Deep link into Telegram WebApp if пользователь не в контексте WebApp
+  const BOT_USERNAME = (import.meta as any)?.env?.VITE_TG_BOT_USERNAME || 'your_bot_username'
+  const openInTelegramWebApp = useCallback(() => {
+    const tgDeep = `tg://resolve?domain=${BOT_USERNAME}&startapp=plus`
+    const httpsDeep = `https://t.me/${BOT_USERNAME}?startapp=plus`
+    try { window.location.href = tgDeep } catch {}
+    setTimeout(() => { try { window.location.href = httpsDeep } catch {} }, 200)
+  }, [BOT_USERNAME])
+
   // --- Telegram Stars payment integration ---
   const createPaymentLink = useCallback(async (): Promise<string> => {
     const tg: any = (window as any)?.Telegram?.WebApp
@@ -129,6 +140,14 @@ export function App(): JSX.Element {
 
   const payPlus = useCallback(async () => {
     try {
+      // Если не в контексте WebApp — предложим открыть в Telegram и выходим
+      const tgTest: any = (window as any)?.Telegram?.WebApp
+      const inWebApp = Boolean(tgTest && tgTest.initDataUnsafe?.user)
+      if (!inWebApp) {
+        persistNow()
+        openInTelegramWebApp()
+        return
+      }
       const tg: any = (window as any)?.Telegram?.WebApp
       const link = await createPaymentLink()
       if (!link) throw new Error('Empty invoice link')
@@ -138,9 +157,9 @@ export function App(): JSX.Element {
         const opened = tg.openInvoice(link, (status: string) => {
           if (status === 'paid') {
             setIsPlus(true)
-            alert('Оплата успешно прошла! Теперь вы на Plus.')
+            try { tg.showPopup && tg.showPopup({ title: 'Оплата', message: 'Оплата успешно прошла! Теперь вы на Plus.', buttons: [{ type: 'ok' }] }) } catch {}
           } else if (status === 'failed') {
-            alert('Ошибка оплаты. Попробуйте снова.')
+            try { tg.showPopup && tg.showPopup({ title: 'Оплата', message: 'Ошибка оплаты. Попробуйте снова.', buttons: [{ type: 'ok' }] }) } catch {}
           } else if (status === 'cancelled') {
             // silently ignore
           }
@@ -150,8 +169,22 @@ export function App(): JSX.Element {
           tg.openTelegramLink(link)
         }
       } else {
-        // If WebApp object missing (unlikely in TG), try openTelegramLink; otherwise no-op
-        if (tg && typeof tg.openTelegramLink === 'function') tg.openTelegramLink(link)
+        // If WebApp object missing (unlikely in TG), try openTelegramLink or ask user to proceed
+        if (tg && typeof tg.openTelegramLink === 'function') {
+          tg.openTelegramLink(link)
+        } else {
+          // Offer to open invoice link via popup to keep context clear
+          try {
+            (window as any).Telegram?.WebApp?.showPopup?.(
+              {
+                title: 'Оплата Stars',
+                message: 'Нужно открыть окно оплаты. Продолжить?',
+                buttons: [{ id: 'pay', type: 'default', text: 'Открыть' }, { type: 'cancel' }],
+              },
+              (btnId: string) => { if (btnId === 'pay') window.location.href = link }
+            )
+          } catch {}
+        }
       }
     } catch (e) {
       alert('Не удалось открыть оплату. Попробуйте позже.')
