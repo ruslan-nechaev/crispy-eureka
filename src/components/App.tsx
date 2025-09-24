@@ -88,6 +88,21 @@ export function App(): JSX.Element {
     }
   }, [messages, planTimeline, showTimeline, isPlus])
 
+  // Helper to persist current snapshot immediately (before payment)
+  const persistNow = useCallback(() => {
+    try {
+      const key = `user_state_${userIdRef.current}`
+      const toSave = {
+        messages,
+        planTimeline,
+        showTimeline,
+        isPlus,
+        savedAt: Date.now(),
+      }
+      if (typeof window !== 'undefined') localStorage.setItem(key, JSON.stringify(toSave))
+    } catch {}
+  }, [messages, planTimeline, showTimeline, isPlus])
+
   // --- Telegram Stars payment integration ---
   const createPaymentLink = useCallback(async (): Promise<string> => {
     const tg: any = (window as any)?.Telegram?.WebApp
@@ -114,23 +129,43 @@ export function App(): JSX.Element {
     try {
       const tg: any = (window as any)?.Telegram?.WebApp
       const link = await createPaymentLink()
-      if (tg?.openInvoice) {
-        tg.openInvoice(link, (status: string) => {
-          if (status === 'paid') {
-            setIsPlus(true)
-            alert('Оплата успешно прошла! Теперь вы на Plus.')
-          } else if (status === 'failed') {
-            alert('Ошибка оплаты. Попробуйте снова.')
-          }
-        })
-      } else {
-        // Fallback: open invoice link (outside TG webapp, for local testing)
-        window.open(link, '_blank')
+      if (!tg?.openInvoice) {
+        alert('Похоже, ваш Telegram не поддерживает оплату внутри WebApp. Обновите приложение и попробуйте снова.')
+        return
       }
+      // Save state before payment to handle unexpected closures
+      persistNow()
+      tg.openInvoice(link, (status: string) => {
+        if (status === 'paid') {
+          setIsPlus(true)
+          alert('Оплата успешно прошла! Теперь вы на Plus.')
+        } else if (status === 'failed') {
+          alert('Ошибка оплаты. Попробуйте снова.')
+        } else if (status === 'cancelled') {
+          // just inform silently or toast
+        }
+      })
     } catch (e) {
       alert('Не удалось открыть оплату. Попробуйте позже.')
     }
-  }, [createPaymentLink])
+  }, [createPaymentLink, persistNow])
+
+  // Subscribe to invoiceClosed to reliably capture the final status
+  useEffect(() => {
+    const tg: any = (typeof window !== 'undefined') ? (window as any).Telegram?.WebApp : undefined
+    if (!tg?.onEvent) return
+    const handler = (data: any) => {
+      try {
+        if (data?.status === 'paid') {
+          setIsPlus(true)
+        }
+      } catch {}
+    }
+    tg.onEvent('invoiceClosed', handler)
+    return () => {
+      try { tg.offEvent && tg.offEvent('invoiceClosed', handler) } catch {}
+    }
+  }, [])
 
   const handleSend = useCallback(async (text: string): Promise<void> => {
     const userMsg: ChatMessage = { id: createId(), role: 'user', text, variant: 'bubble' }
