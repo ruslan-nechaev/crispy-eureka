@@ -24,6 +24,7 @@ export function App(): JSX.Element {
   const listRef = useRef<HTMLDivElement>(null)
   // Dynamic timeline data from routed plan
   const [planTimeline, setPlanTimeline] = useState<any[] | null>(null)
+  const [isPlus, setIsPlus] = useState<boolean>(false)
 
   // Webhook for outbound user messages
   const WEBHOOK_URL = 'https://fit-ai-fg.app.n8n.cloud/webhook-test/20123bc1-5e8c-429d-8790-f20e6138b0f3'
@@ -63,6 +64,7 @@ export function App(): JSX.Element {
         if (Array.isArray(parsed?.messages)) setMessages(parsed.messages as ChatMessage[])
         if (Array.isArray(parsed?.planTimeline)) setPlanTimeline(parsed.planTimeline as any[])
         if (typeof parsed?.showTimeline === 'boolean') setShowTimeline(Boolean(parsed.showTimeline))
+        if (typeof parsed?.isPlus === 'boolean') setIsPlus(Boolean(parsed.isPlus))
       }
     } catch (err) {
       console.warn('State restore failed', err)
@@ -77,13 +79,58 @@ export function App(): JSX.Element {
         messages,
         planTimeline,
         showTimeline,
+        isPlus,
         savedAt: Date.now(),
       }
       if (typeof window !== 'undefined') localStorage.setItem(key, JSON.stringify(toSave))
     } catch (err) {
       // Ignore storage quota / private mode errors to avoid breaking UI
     }
-  }, [messages, planTimeline, showTimeline])
+  }, [messages, planTimeline, showTimeline, isPlus])
+
+  // --- Telegram Stars payment integration ---
+  const createPaymentLink = useCallback(async (): Promise<string> => {
+    const tg: any = (window as any)?.Telegram?.WebApp
+    const uid = userIdRef.current || getTelegramUserId()
+    const url = `https://api.telegram.org/bot8265953307:AAG51J5sUw26d1d4j9XDiKK9yEZ3HvEGD44/createInvoiceLink`
+    const body = {
+      title: 'Plus подписка',
+      description: 'Подписка на расширенные возможности сервиса на 30 дней',
+      payload: `plus_subscription_${uid}`,
+      currency: 'XTR',
+      prices: [{ label: 'Plus подписка', amount: 500 }],
+    }
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+    const data = await res.json()
+    if (!data?.ok) throw new Error('Failed to create invoice link')
+    return data.result as string
+  }, [])
+
+  const payPlus = useCallback(async () => {
+    try {
+      const tg: any = (window as any)?.Telegram?.WebApp
+      const link = await createPaymentLink()
+      if (tg?.openInvoice) {
+        tg.openInvoice(link, (status: string) => {
+          if (status === 'paid') {
+            setIsPlus(true)
+            alert('Оплата успешно прошла! Теперь вы на Plus.')
+          } else if (status === 'failed') {
+            alert('Ошибка оплаты. Попробуйте снова.')
+          }
+        })
+      } else {
+        // Fallback: open invoice link (outside TG webapp, for local testing)
+        window.open(link, '_blank')
+      }
+    } catch (e) {
+      alert('Не удалось открыть оплату. Попробуйте позже.')
+    }
+  }, [createPaymentLink])
 
   const handleSend = useCallback(async (text: string): Promise<void> => {
     const userMsg: ChatMessage = { id: createId(), role: 'user', text, variant: 'bubble' }
@@ -204,11 +251,12 @@ export function App(): JSX.Element {
           </button>
           <button
             type="button"
+            onClick={payPlus}
             className="pointer-events-auto flex items-center gap-2 rounded-full bg-[#3F2EA6] px-5 py-2 md:px-6 md:py-2.5 text-[#C9B8FF] font-semibold shadow-[0_2px_12px_rgba(63,46,166,0.45)]"
             aria-label="Перейти на Plus"
           >
             <Sparkles className="h-4 w-4 text-[#C9B8FF]/90" />
-            <span className="text-sm md:text-base">Перейти на Plus</span>
+            <span className="text-sm md:text-base">{isPlus ? 'Plus активен' : 'Перейти на Plus'}</span>
           </button>
           <button
             type="button"
