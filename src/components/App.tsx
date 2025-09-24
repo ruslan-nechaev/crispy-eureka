@@ -76,18 +76,7 @@ export function App(): JSX.Element {
     }
   }, [])
 
-  // Автозапуск оплаты при старте из deep-link ?startapp=plus
-  useEffect(() => {
-    try {
-      const tg: any = (window as any)?.Telegram?.WebApp
-      const startParam: string | undefined = tg?.initDataUnsafe?.start_param
-      if (isWebApp && !isPlus && !autoPayRef.current && (startParam === 'plus')) {
-        autoPayRef.current = true
-        // Небольшая задержка, чтобы WebApp успел перейти в ready/expand
-        setTimeout(() => { try { payPlus() } catch {} }, 150)
-      }
-    } catch {}
-  }, [isWebApp, isPlus, payPlus])
+  // Автозапуск оплаты при старте из deep-link ?startapp=plus — переносим ниже определения payPlus (чтобы избежать TDZ)
 
   // Persist state after every interaction/update
   useEffect(() => {
@@ -215,6 +204,18 @@ export function App(): JSX.Element {
       alert('Не удалось открыть оплату. Попробуйте позже.')
     }
   }, [createPaymentLink, persistNow])
+
+  // Автозапуск оплаты при старте из deep-link ?startapp=plus (после объявления payPlus)
+  useEffect(() => {
+    try {
+      const tg: any = (window as any)?.Telegram?.WebApp
+      const startParam: string | undefined = tg?.initDataUnsafe?.start_param
+      if (isWebApp && !isPlus && !autoPayRef.current && (startParam === 'plus')) {
+        autoPayRef.current = true
+        setTimeout(() => { try { payPlus() } catch {} }, 150)
+      }
+    } catch {}
+  }, [isWebApp, isPlus, payPlus])
 
   // Subscribe to invoiceClosed to reliably capture the final status
   useEffect(() => {
