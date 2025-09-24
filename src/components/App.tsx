@@ -55,13 +55,24 @@ export function App(): JSX.Element {
     }
   }
 
+  // Helper: надёжнее определяем WebApp контекст
+  const isInWebApp = (): boolean => {
+    try {
+      const tg: any = (window as any)?.Telegram?.WebApp
+      if (!tg) return false
+      if (tg.initData && typeof tg.initData === 'string' && tg.initData.length > 0) return true
+      if (tg.initDataUnsafe?.user) return true
+      return false
+    } catch { return false }
+  }
+
   // Restore state once on mount
   useEffect(() => {
     userIdRef.current = getTelegramUserId()
     try {
       const tg: any = (window as any)?.Telegram?.WebApp
       try { tg?.ready && tg.ready(); tg?.expand && tg.expand(); } catch {}
-      setIsWebApp(Boolean(tg && tg.initDataUnsafe?.user))
+      setIsWebApp(isInWebApp())
       const key = `user_state_${userIdRef.current}`
       const raw = typeof window !== 'undefined' ? localStorage.getItem(key) : null
       if (raw) {
@@ -154,7 +165,9 @@ export function App(): JSX.Element {
           // Находится в Telegram, но не в WebApp: сразу открываем счёт внутри Telegram
           const linkOutside = await createPaymentLink()
           if (linkOutside) {
-            tgRoot.openTelegramLink(linkOutside)
+            // Добавим параметр startattach=pay для устойчивости открытия платежа в некоторых клиентах
+            const attach = linkOutside.includes('?') ? '&' : '?'
+            tgRoot.openTelegramLink(`${linkOutside}${attach}startattach=pay`)
             return
           }
         }
@@ -180,7 +193,8 @@ export function App(): JSX.Element {
         })
         if ((opened === false || typeof opened === 'undefined') && typeof tg.openTelegramLink === 'function') {
           // Fallback inside Telegram to avoid closing the WebApp
-          tg.openTelegramLink(link)
+          const attach = link.includes('?') ? '&' : '?'
+          tg.openTelegramLink(`${link}${attach}startattach=pay`)
         }
       } else {
         // If WebApp object missing (unlikely in TG), try openTelegramLink or ask user to proceed
