@@ -57,6 +57,8 @@ export function App(): JSX.Element {
   useEffect(() => {
     userIdRef.current = getTelegramUserId()
     try {
+      const tg: any = (window as any)?.Telegram?.WebApp
+      try { tg?.ready && tg.ready(); tg?.expand && tg.expand(); } catch {}
       const key = `user_state_${userIdRef.current}`
       const raw = typeof window !== 'undefined' ? localStorage.getItem(key) : null
       if (raw) {
@@ -129,6 +131,7 @@ export function App(): JSX.Element {
     try {
       const tg: any = (window as any)?.Telegram?.WebApp
       const link = await createPaymentLink()
+      if (!link) throw new Error('Empty invoice link')
       // Save state before payment to handle unexpected closures
       persistNow()
       if (tg?.openInvoice) {
