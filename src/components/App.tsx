@@ -154,32 +154,12 @@ export function App(): JSX.Element {
 
   const payPlus = useCallback(async () => {
     try {
-      // Если не в контексте WebApp — предложим открыть в Telegram и выходим
-      const tgTest: any = (window as any)?.Telegram?.WebApp
-      const inWebApp = Boolean(tgTest && tgTest.initDataUnsafe?.user)
-      if (!inWebApp) {
-        // Мы не в WebApp. Проверим, есть ли Telegram-контекст вообще (например, встроенный браузер Telegram)
-        const tgRoot: any = (window as any)?.Telegram
-        persistNow()
-        if (tgRoot && typeof tgRoot.openTelegramLink === 'function') {
-          // Находится в Telegram, но не в WebApp: сразу открываем счёт внутри Telegram
-          const linkOutside = await createPaymentLink()
-          if (linkOutside) {
-            // Добавим параметр startattach=pay для устойчивости открытия платежа в некоторых клиентах
-            const attach = linkOutside.includes('?') ? '&' : '?'
-            tgRoot.openTelegramLink(`${linkOutside}${attach}startattach=pay`)
-            return
-          }
-        }
-        // Нет Telegram-контекста: переводим в WebApp через deep-link
-        openInTelegramWebApp()
-        return
-      }
       const tg: any = (window as any)?.Telegram?.WebApp
+      const tgRoot: any = (window as any)?.Telegram
+      persistNow()
       const link = await createPaymentLink()
       if (!link) throw new Error('Empty invoice link')
-      // Save state before payment to handle unexpected closures
-      persistNow()
+      // Пытаемся открыть строго через openInvoice (встроенная модалка)
       if (tg?.openInvoice) {
         const opened = tg.openInvoice(link, (status: string) => {
           if (status === 'paid') {
@@ -191,28 +171,19 @@ export function App(): JSX.Element {
             // silently ignore
           }
         })
-        if ((opened === false || typeof opened === 'undefined') && typeof tg.openTelegramLink === 'function') {
-          // Fallback inside Telegram to avoid closing the WebApp
+        if ((opened === false || typeof opened === 'undefined')) {
+          // Fallback внутри Telegram: откроем ссылку счета в контейнере TG
           const attach = link.includes('?') ? '&' : '?'
-          tg.openTelegramLink(`${link}${attach}startattach=pay`)
+          if (typeof tg.openTelegramLink === 'function') tg.openTelegramLink(`${link}${attach}startattach=pay`)
+          else if (tgRoot?.openTelegramLink) tgRoot.openTelegramLink(`${link}${attach}startattach=pay`)
+          else window.location.href = link
         }
       } else {
-        // If WebApp object missing (unlikely in TG), try openTelegramLink or ask user to proceed
-        if (tg && typeof tg.openTelegramLink === 'function') {
-          tg.openTelegramLink(link)
-        } else {
-          // Offer to open invoice link via popup to keep context clear
-          try {
-            (window as any).Telegram?.WebApp?.showPopup?.(
-              {
-                title: 'Оплата Stars',
-                message: 'Нужно открыть окно оплаты. Продолжить?',
-                buttons: [{ id: 'pay', type: 'default', text: 'Открыть' }, { type: 'cancel' }],
-              },
-              (btnId: string) => { if (btnId === 'pay') window.location.href = link }
-            )
-          } catch {}
-        }
+        // Нет openInvoice — откроем ссылку счета в Telegram или, в крайнем случае, прямой переход
+        const attach = link.includes('?') ? '&' : '?'
+        if (tg && typeof tg.openTelegramLink === 'function') tg.openTelegramLink(`${link}${attach}startattach=pay`)
+        else if (tgRoot?.openTelegramLink) tgRoot.openTelegramLink(`${link}${attach}startattach=pay`)
+        else window.location.href = link
       }
     } catch (e) {
       alert('Не удалось открыть оплату. Попробуйте позже.')
