@@ -14,6 +14,9 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
+  define: {
+    'import.meta.env.VITE_TG_BOT_USERNAME': JSON.stringify(process.env.VITE_TG_BOT_USERNAME || 'F1tA1Bot'),
+  },
 })
 
 

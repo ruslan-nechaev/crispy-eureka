@@ -108,7 +108,7 @@ export function App(): JSX.Element {
   }, [messages, planTimeline, showTimeline, isPlus])
 
   // Deep link into Telegram WebApp if пользователь не в контексте WebApp
-  const BOT_USERNAME = (import.meta as any)?.env?.VITE_TG_BOT_USERNAME || 'your_bot_username'
+  const BOT_USERNAME = (import.meta as any)?.env?.VITE_TG_BOT_USERNAME || 'F1tA1Bot'
   const openInTelegramWebApp = useCallback(() => {
     const tgDeep = `tg://resolve?domain=${BOT_USERNAME}&startapp=plus`
     const httpsDeep = `https://t.me/${BOT_USERNAME}?startapp=plus`
