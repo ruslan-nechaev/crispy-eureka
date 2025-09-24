@@ -144,7 +144,18 @@ export function App(): JSX.Element {
       const tgTest: any = (window as any)?.Telegram?.WebApp
       const inWebApp = Boolean(tgTest && tgTest.initDataUnsafe?.user)
       if (!inWebApp) {
+        // Мы не в WebApp. Проверим, есть ли Telegram-контекст вообще (например, встроенный браузер Telegram)
+        const tgRoot: any = (window as any)?.Telegram
         persistNow()
+        if (tgRoot && typeof tgRoot.openTelegramLink === 'function') {
+          // Находится в Telegram, но не в WebApp: сразу открываем счёт внутри Telegram
+          const linkOutside = await createPaymentLink()
+          if (linkOutside) {
+            tgRoot.openTelegramLink(linkOutside)
+            return
+          }
+        }
+        // Нет Telegram-контекста: переводим в WebApp через deep-link
         openInTelegramWebApp()
         return
       }
