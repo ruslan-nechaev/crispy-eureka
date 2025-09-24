@@ -129,22 +129,23 @@ export function App(): JSX.Element {
     try {
       const tg: any = (window as any)?.Telegram?.WebApp
       const link = await createPaymentLink()
-      if (!tg?.openInvoice) {
-        alert('Похоже, ваш Telegram не поддерживает оплату внутри WebApp. Обновите приложение и попробуйте снова.')
-        return
-      }
       // Save state before payment to handle unexpected closures
       persistNow()
-      tg.openInvoice(link, (status: string) => {
-        if (status === 'paid') {
-          setIsPlus(true)
-          alert('Оплата успешно прошла! Теперь вы на Plus.')
-        } else if (status === 'failed') {
-          alert('Ошибка оплаты. Попробуйте снова.')
-        } else if (status === 'cancelled') {
-          // just inform silently or toast
-        }
-      })
+      if (tg?.openInvoice) {
+        tg.openInvoice(link, (status: string) => {
+          if (status === 'paid') {
+            setIsPlus(true)
+            alert('Оплата успешно прошла! Теперь вы на Plus.')
+          } else if (status === 'failed') {
+            alert('Ошибка оплаты. Попробуйте снова.')
+          } else if (status === 'cancelled') {
+            // silently ignore
+          }
+        })
+      } else {
+        // Fallback for browser preview: open invoice in a new tab instead of closing app
+        window.open(link, '_blank', 'noopener,noreferrer')
+      }
     } catch (e) {
       alert('Не удалось открыть оплату. Попробуйте позже.')
     }
