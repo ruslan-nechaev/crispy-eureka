@@ -26,6 +26,7 @@ export function App(): JSX.Element {
   const [planTimeline, setPlanTimeline] = useState<any[] | null>(null)
   const [isPlus, setIsPlus] = useState<boolean>(false)
   const [isWebApp, setIsWebApp] = useState<boolean>(false)
+  const autoPayRef = useRef<boolean>(false)
 
   // Webhook for outbound user messages
   const WEBHOOK_URL = 'https://fit-ai-fg.app.n8n.cloud/webhook-test/20123bc1-5e8c-429d-8790-f20e6138b0f3'
@@ -74,6 +75,19 @@ export function App(): JSX.Element {
       console.warn('State restore failed', err)
     }
   }, [])
+
+  // Автозапуск оплаты при старте из deep-link ?startapp=plus
+  useEffect(() => {
+    try {
+      const tg: any = (window as any)?.Telegram?.WebApp
+      const startParam: string | undefined = tg?.initDataUnsafe?.start_param
+      if (isWebApp && !isPlus && !autoPayRef.current && (startParam === 'plus')) {
+        autoPayRef.current = true
+        // Небольшая задержка, чтобы WebApp успел перейти в ready/expand
+        setTimeout(() => { try { payPlus() } catch {} }, 150)
+      }
+    } catch {}
+  }, [isWebApp, isPlus, payPlus])
 
   // Persist state after every interaction/update
   useEffect(() => {
