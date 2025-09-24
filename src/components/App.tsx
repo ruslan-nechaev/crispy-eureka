@@ -147,8 +147,13 @@ export function App(): JSX.Element {
           tg.openTelegramLink(link)
         }
       } else {
-        // No Telegram WebApp context (e.g., browser preview) — do nothing or show hint
-        alert('Откройте приложение в Telegram, чтобы оплатить в окне WebApp.')
+        // openInvoice not present — try openTelegramLink inside Telegram container
+        if (tg && typeof tg.openTelegramLink === 'function') {
+          tg.openTelegramLink(link)
+        } else {
+          // No Telegram WebApp context (e.g., browser preview)
+          alert('Откройте приложение в Telegram, чтобы оплатить в окне WebApp.')
+        }
       }
     } catch (e) {
       alert('Не удалось открыть оплату. Попробуйте позже.')
