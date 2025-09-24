@@ -132,7 +132,7 @@ export function App(): JSX.Element {
       // Save state before payment to handle unexpected closures
       persistNow()
       if (tg?.openInvoice) {
-        tg.openInvoice(link, (status: string) => {
+        const opened = tg.openInvoice(link, (status: string) => {
           if (status === 'paid') {
             setIsPlus(true)
             alert('Оплата успешно прошла! Теперь вы на Plus.')
@@ -142,9 +142,13 @@ export function App(): JSX.Element {
             // silently ignore
           }
         })
+        if (opened === false && typeof tg.openTelegramLink === 'function') {
+          // Fallback inside Telegram to avoid closing the WebApp
+          tg.openTelegramLink(link)
+        }
       } else {
-        // Fallback for browser preview: open invoice in a new tab instead of closing app
-        window.open(link, '_blank', 'noopener,noreferrer')
+        // No Telegram WebApp context (e.g., browser preview) — do nothing or show hint
+        alert('Откройте приложение в Telegram, чтобы оплатить в окне WebApp.')
       }
     } catch (e) {
       alert('Не удалось открыть оплату. Попробуйте позже.')
