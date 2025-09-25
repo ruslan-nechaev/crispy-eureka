@@ -453,8 +453,8 @@ export function App(): JSX.Element {
       {/* Нижняя панель: карточка слева до кнопки, справа кнопка; ниже инпут. Малый равный зазор. */}
       <div className="absolute inset-x-0 bottom-2 z-40 flex flex-col items-center gap-2 px-3 transition-all duration-500 ease-out">
         <div className="w-full max-w-[340px] md:max-w-[560px] mx-auto flex items-center justify-between">
-          <div className="pointer-events-auto flex-1 min-w-0 mr-3">
-            <ActivityChartCard className="max-w-none" title="Activity" totalValue="21h" data={weeklyActivityData} size="sm" density="dense40" chartHeightPx={45} />
+          <div className="pointer-events-auto flex-1 min-w-0 mr-3 transform scale-y-[0.8] origin-bottom">
+            <ActivityChartCard className="max-w-none" title="Activity" totalValue="21h" data={weeklyActivityData} size="sm" density="dense40" chartHeightPx={56} />
           </div>
           <button
             type="button"
