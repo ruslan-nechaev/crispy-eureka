@@ -27,6 +27,9 @@ export function App(): JSX.Element {
   const [isPlus, setIsPlus] = useState<boolean>(false)
   const [isWebApp, setIsWebApp] = useState<boolean>(false)
   const autoPayRef = useRef<boolean>(false)
+  const [aura, setAura] = useState<number>(0)
+  const [completedIds, setCompletedIds] = useState<number[]>([])
+  const [weekly, setWeekly] = useState<number[]>([0,0,0,0,0,0,0])
 
   // Webhook for outbound user messages
   const WEBHOOK_URL = 'https://fit-ai-fg.app.n8n.cloud/webhook-test/20123bc1-5e8c-429d-8790-f20e6138b0f3'
@@ -81,6 +84,9 @@ export function App(): JSX.Element {
         if (Array.isArray(parsed?.planTimeline)) setPlanTimeline(parsed.planTimeline as any[])
         if (typeof parsed?.showTimeline === 'boolean') setShowTimeline(Boolean(parsed.showTimeline))
         if (typeof parsed?.isPlus === 'boolean') setIsPlus(Boolean(parsed.isPlus))
+        if (typeof parsed?.aura === 'number') setAura(Number(parsed.aura) || 0)
+        if (Array.isArray(parsed?.completedIds)) setCompletedIds(parsed.completedIds.map((n: any) => Number(n)).filter((n: any) => Number.isFinite(n)))
+        if (Array.isArray(parsed?.weekly) && parsed.weekly.length === 7) setWeekly(parsed.weekly.map((n: any) => Number(n) || 0))
       }
     } catch (err) {
       console.warn('State restore failed', err)
@@ -98,13 +104,16 @@ export function App(): JSX.Element {
         planTimeline,
         showTimeline,
         isPlus,
+        aura,
+        completedIds,
+        weekly,
         savedAt: Date.now(),
       }
       if (typeof window !== 'undefined') localStorage.setItem(key, JSON.stringify(toSave))
     } catch (err) {
       // Ignore storage quota / private mode errors to avoid breaking UI
     }
-  }, [messages, planTimeline, showTimeline, isPlus])
+  }, [messages, planTimeline, showTimeline, isPlus, aura, completedIds, weekly])
 
   // Helper to persist current snapshot immediately (before payment)
   const persistNow = useCallback(() => {
@@ -115,11 +124,31 @@ export function App(): JSX.Element {
         planTimeline,
         showTimeline,
         isPlus,
+        aura,
+        completedIds,
+        weekly,
         savedAt: Date.now(),
       }
       if (typeof window !== 'undefined') localStorage.setItem(key, JSON.stringify(toSave))
     } catch {}
-  }, [messages, planTimeline, showTimeline, isPlus])
+  }, [messages, planTimeline, showTimeline, isPlus, aura, completedIds, weekly])
+
+  const handleCompletePlan = useCallback((id: number) => {
+    setCompletedIds((prev) => (prev.includes(id) ? prev : [...prev, id]))
+    setAura((prev) => prev + 10)
+    // increment today's weekly bar by +10
+    setWeekly((prev) => {
+      const idx = new Date().getDay() // 0..6, Sunday first
+      const next = [...prev]
+      next[idx] = (next[idx] || 0) + 10
+      return next
+    })
+    // update plan status if present
+    setPlanTimeline((prev) => {
+      if (!prev) return prev
+      return prev.map((it) => (it.id === id ? { ...it, status: 'completed' } : it)) as any
+    })
+  }, [])
 
   // Deep link into Telegram WebApp if пользователь не в контексте WebApp
   const BOT_USERNAME = (import.meta as any)?.env?.VITE_TG_BOT_USERNAME || 'F1tA1Bot'
@@ -312,15 +341,12 @@ export function App(): JSX.Element {
 
   if (!showMain) return <SilkBackground showCopy />
 
-  const weeklyActivityData = [
-    { day: 'S', value: 8 },
-    { day: 'M', value: 12 },
-    { day: 'T', value: 9 },
-    { day: 'W', value: 4 },
-    { day: 'T', value: 7 },
-    { day: 'F', value: 14 },
-    { day: 'S', value: 2 },
-  ]
+  const weeklyActivityData = useMemo(() => {
+    const labels = ['S','M','T','W','T','F','S']
+    return labels.map((d, i) => ({ day: d, value: weekly[i] || 0 }))
+  }, [weekly])
+
+  const weeklySum = useMemo(() => weekly.reduce((a, b) => a + (b || 0), 0), [weekly])
 
   return (
     <div className="h-screen w-screen relative overflow-hidden bg-black rounded-none border-0 outline-none">
@@ -369,6 +395,8 @@ export function App(): JSX.Element {
                 { id:5,title:'Release',date:'May 2024',content:'Final deployment and release.',category:'Release',icon:Clock,relatedIds:[4],status:'pending',energy:10},
                 ]
               }
+              onComplete={handleCompletePlan}
+              completedIds={completedIds}
             />
           </div>
         </div>
@@ -454,7 +482,16 @@ export function App(): JSX.Element {
       <div className="absolute inset-x-0 bottom-2 z-40 flex flex-col items-center gap-2 px-3 transition-all duration-500 ease-out">
         <div className="w-full max-w-[340px] md:max-w-[560px] mx-auto flex items-center justify-between">
           <div className="pointer-events-auto flex-1 min-w-0 mr-3 transform scale-y-[0.8] origin-bottom">
-            <ActivityChartCard className="max-w-none" title="Activity" totalValue="21h" data={weeklyActivityData} size="sm" density="dense40" chartHeightPx={56} />
+            <ActivityChartCard
+              className="max-w-none"
+              title="Aura"
+              totalValue={`${aura}`}
+              data={weeklyActivityData}
+              size="sm"
+              density="dense40"
+              chartHeightPx={56}
+              deltaText={`+${weeklySum} за\nнеделю`}
+            />
           </div>
           <button
             type="button"

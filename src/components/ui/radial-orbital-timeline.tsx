@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import type { ElementType } from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Check } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/shadcn/card";
 import GitHubButton from "@/components/ui/button-1";
 
@@ -21,9 +21,11 @@ interface RadialOrbitalTimelineProps {
   timelineData: TimelineItem[];
   onExpandedChange?: (expanded: boolean) => void;
   collapseAllSignal?: number;
+  onComplete?: (id: number) => void;
+  completedIds?: number[];
 }
 
-export default function RadialOrbitalTimeline({ timelineData, onExpandedChange, collapseAllSignal }: RadialOrbitalTimelineProps) {
+export default function RadialOrbitalTimeline({ timelineData, onExpandedChange, collapseAllSignal, onComplete, completedIds }: RadialOrbitalTimelineProps) {
   const ORBIT_RADIUS = 115;
 
   const [expandedItems, setExpandedItems] = useState<Record<number, boolean>>({});
@@ -228,14 +230,19 @@ export default function RadialOrbitalTimeline({ timelineData, onExpandedChange, 
               zIndex: isExpanded ? 200 : pos.zIndex,
               willChange: 'transform',
             } as React.CSSProperties;
+            const completed = item.status === "completed" || (completedIds?.includes(item.id) ?? false);
             return (
               <div key={item.id} ref={(el) => (nodeRefs.current[item.id] = el)} className="absolute cursor-pointer" style={nodeStyle} onClick={(e) => { e.stopPropagation(); toggleItem(item.id); }}>
-                <div className={`absolute rounded-full -inset-1 ${isExpanded ? "" : ""}`} style={{ background: `radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%)`, width: `${item.energy * 0.5 + 40}px`, height: `${item.energy * 0.5 + 40}px`, left: `-${(item.energy * 0.5 + 40 - 40) / 2}px`, top: `-${(item.energy * 0.5 + 40 - 40) / 2}px` }}></div>
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${isExpanded ? "bg-white text-black" : isRelated ? "bg-white/50 text-black" : "bg-black text-white"} border-2 ${isExpanded ? "border-white shadow-lg shadow-white/30" : isRelated ? "border-white animate-pulse" : "border-white"} transition-transform duration-300 transform ${isExpanded ? "scale-150" : ""}`}>
-                  {(item as any).emoji ? (
-                    <span className="text-[20px] leading-none">{(item as any).emoji}</span>
+                <div className={`absolute rounded-full -inset-1`} style={{ background: completed ? `radial-gradient(circle, rgba(16,185,129,0.28) 0%, rgba(16,185,129,0) 70%)` : `radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%)`, width: `${item.energy * 0.5 + 40}px`, height: `${item.energy * 0.5 + 40}px`, left: `-${(item.energy * 0.5 + 40 - 40) / 2}px`, top: `-${(item.energy * 0.5 + 40 - 40) / 2}px` }}></div>
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${completed ? "bg-emerald-500 text-white border-emerald-300 shadow-lg shadow-emerald-400/30" : isExpanded ? "bg-white text-black border-white shadow-lg shadow-white/30" : isRelated ? "bg-white/50 text-black border-white animate-pulse" : "bg-black text-white border-white"} border-2 transition-transform duration-300 transform ${isExpanded ? "scale-150" : ""}`}>
+                  {completed ? (
+                    <Check size={20} />
                   ) : (
-                    <Icon size={20} />
+                    (item as any).emoji ? (
+                      <span className="text-[20px] leading-none">{(item as any).emoji}</span>
+                    ) : (
+                      <Icon size={20} />
+                    )
                   )}
                 </div>
                 <div className={`absolute top-14 left-1/2 -translate-x-1/2 text-center text-xs font-semibold tracking-wider text-white`}>{item.title}</div>
@@ -275,8 +282,22 @@ export default function RadialOrbitalTimeline({ timelineData, onExpandedChange, 
                       </div>
 
                         <div className="mt-1 mb-[2px] px-1 flex justify-center w-full">
-                          <GitHubButton autoAnimate label="+10 Aura" className="w-full h-16 md:h-18 rounded-2xl overflow-hidden" />
-                      </div>
+                          {completed ? (
+                            <button className="w-full h-16 md:h-18 rounded-2xl bg-emerald-600 text-white font-semibold flex items-center justify-center gap-2" type="button" aria-label="Выполнено">
+                              <Check className="h-5 w-5" /> Выполнено
+                            </button>
+                          ) : (
+                            <GitHubButton
+                              autoAnimate
+                              label="+10 Aura"
+                              className="w-full h-16 md:h-18 rounded-2xl overflow-hidden"
+                              onClick={() => {
+                                try { (document.activeElement as HTMLElement)?.blur?.() } catch {}
+                                onComplete?.(item.id)
+                              }}
+                            />
+                          )}
+                        </div>
 
                         <button onClick={(e) => { e.stopPropagation(); goToNext(); }} className="absolute -bottom-4 -right-4 h-10 w-10 rounded-full bg-black/80 border border-white/10 shadow-[0_6px_18px_rgba(0,0,0,0.7)] backdrop-blur-sm text-white flex items-center justify-center hover:bg-black/70" aria-label="Next card">
                           <ChevronRight size={16} strokeWidth={2.6} className="text-white/85" />

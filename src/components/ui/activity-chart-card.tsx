@@ -22,10 +22,11 @@ interface ActivityChartCardProps {
   chartHeightPx?: number;
   size?: 'md' | 'sm';
   density?: 'normal' | 'dense40';
+  deltaText?: string;
 }
 
 export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
-  title = "Activity",
+  title = "Aura",
   totalValue,
   data,
   className,
@@ -34,6 +35,7 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
   chartHeightPx,
   size = 'md',
   density = 'normal',
+  deltaText,
 }) => {
   const [selectedRange, setSelectedRange] = React.useState(dropdownOptions[0] || "");
 
@@ -157,8 +159,19 @@ export const ActivityChartCard: React.FC<ActivityChartCardProps> = ({
                   density==='dense40' ? 'h-3.5 w-3.5' : 'h-4 w-4'
                 )}
               />
-              <span className="block">+12% from</span>
-              <span className="block">last week</span>
+              {deltaText ? (
+                <>
+                  <span className="block">{deltaText.split('\n')[0]}</span>
+                  {deltaText.split('\n')[1] && (
+                    <span className="block">{deltaText.split('\n')[1]}</span>
+                  )}
+                </>
+              ) : (
+                <>
+                  <span className="block">+12% from</span>
+                  <span className="block">last week</span>
+                </>
+              )}
             </CardDescription>
           </div>
 
