@@ -339,7 +339,7 @@ export function App(): JSX.Element {
       : prev))
   }, [showMain, GREETING_TEXT])
 
-  if (!showMain) return <SilkBackground showCopy />
+  // Рендерим всегда основной UI, а лоадер кладём как оверлей, чтобы избежать "чёрного экрана"
 
   const weeklyActivityData = useMemo(() => {
     const labels = ['S','M','T','W','T','F','S']
@@ -350,6 +350,11 @@ export function App(): JSX.Element {
 
   return (
     <div className="h-screen w-screen relative overflow-hidden bg-black rounded-none border-0 outline-none">
+      {!showMain && (
+        <div className="absolute inset-0 z-50">
+          <SilkBackground showCopy />
+        </div>
+      )}
       {/* HUD removed */}
       {/* Lightweight background on main screen for smoothness */}
       <SilkBackground showCopy={false} mode="lite" />
